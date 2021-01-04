@@ -51,8 +51,14 @@ PinCmd::PinCmd(Config* conf, const char* configFile, const char* outputDir, uint
         pinPath = QUOTED(PIN_PATH);
         zsimPath = QUOTED(ZSIM_PATH);
     }
+    
 
     args.push_back(pinPath);
+
+    // HOT FIX for kernel version 4.15
+    args.push_back("-injection");
+    args.push_back("child");
+    args.push_back("-ifeellucky");
 
     //Global pin options
     args.push_back("-follow_execv"); //instrument child processes
