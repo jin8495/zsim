@@ -125,6 +125,40 @@ uint64_t Cache::access(MemReq& req) {
     return respCycle;
 }
 
+// JIN
+// Assume that DRAM is inclusive of the LLC.
+// Because non-inclusive LLC is not implemented in the ZSim as far as I know.
+void Cache::PrintData(MemReq& req, bool isMiss)
+{
+//	if(zinfo->llcName != name.c_str())
+//		return;
+
+	DataLine data = gm_calloc<uint8_t>(zinfo->lineSize);
+	Address reqAddress = req.lineAddr << lineBits;
+	PIN_SafeCopy(data, (void*)reqAddress, zinfo->lineSize);
+
+	// Read
+	if(req.type == GETS || req.type == GETX)
+	{
+		if(isMiss)
+		{
+			printf("DRAM_R, %lu, %s, 0x%016lx, ", req.cycle, AccessTypeName(req.type), reqAddress);
+	
+			for(unsigned i = 0; i < zinfo->lineSize; i++)
+				printf("%02x,", ((uint8_t*)data)[i]);
+			printf("\n");
+		}
+	}
+	// Write-through (Non-inclusive)
+	{
+		printf("DRAM_W, %lu, %s, 0x%016lx, ", req.cycle, AccessTypeName(req.type), reqAddress);
+
+		for(unsigned i = 0; i < zinfo->lineSize; i++)
+			printf("%02x,", ((uint8_t*)data)[i]);
+		printf("\n");
+	}
+}
+
 void Cache::startInvalidate() {
     cc->startInv(); //note we don't grab tcc; tcc serializes multiple up accesses, down accesses don't see it
 }

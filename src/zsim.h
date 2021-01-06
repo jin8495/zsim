@@ -27,11 +27,14 @@
 #define ZSIM_H_
 
 #include <stdint.h>
+#include <string.h>
 #include <sys/time.h>
 #include "constants.h"
 #include "debug.h"
 #include "locks.h"
 #include "pad.h"
+
+#include <string>
 
 class Core;
 class Scheduler;
@@ -181,6 +184,10 @@ struct GlobSimInfo {
     // Trace-driven simulation (no cores)
     bool traceDriven;
     TraceDriver* traceDriver;
+
+		// JIN
+//		std::string llcName;
+
 };
 
 

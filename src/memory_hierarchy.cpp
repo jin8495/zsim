@@ -44,6 +44,7 @@ const char* MESIStateName(MESIState s) {
     return mesiStateNames[s];
 }
 
+
 #include <type_traits>
 
 static inline void CompileTimeAsserts() {

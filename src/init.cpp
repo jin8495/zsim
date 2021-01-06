@@ -470,6 +470,9 @@ static void InitSystem(Config& config) {
     if (parentlessCacheGroups.size() != 1) panic("Only one last-level cache allowed, found: %s", Str(parentlessCacheGroups).c_str());
     string llc = parentlessCacheGroups[0];
 
+		// JIN
+//		zinfo->llcName = llc.c_str();
+
     auto isTerminal = [&](string group) -> bool {
         return childMap[group].size() == 0;
     };

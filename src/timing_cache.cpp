@@ -153,6 +153,8 @@ uint64_t TimingCache::access(MemReq& req) {
         TimingRecord tr = {req.lineAddr << lineBits, req.cycle, respCycle, req.type, nullptr, nullptr}; //note the end event is the response, not the wback
 
         if (getDoneCycle - req.cycle == accLat) {
+						this->PrintData(req, false);	// JIN
+
             // Hit
             assert(!writebackRecord.isValid());
             assert(!accessRecord.isValid());
@@ -161,6 +163,8 @@ uint64_t TimingCache::access(MemReq& req) {
             ev->setMinStartCycle(req.cycle);
             tr.startEvent = tr.endEvent = ev;
         } else {
+						this->PrintData(req, true);	// JIN
+
             assert_msg(getDoneCycle == respCycle, "gdc %ld rc %ld", getDoneCycle, respCycle);
 
             // Miss events:

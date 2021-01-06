@@ -34,6 +34,8 @@
 #include "repl_policies.h"
 #include "stats.h"
 
+#include "pin.H"
+
 class Network;
 
 /* General coherent modular cache. The replacement policy and cache array are
@@ -70,6 +72,10 @@ class Cache : public BaseCache {
             startInvalidate();
             return finishInvalidate(req);
         }
+
+				// JIN
+				// Print dataline between LLC and DRAM
+				virtual void PrintData(MemReq& req, bool isMiss);
 
     protected:
         void initCacheStats(AggregateStat* cacheStat);
