@@ -34,8 +34,6 @@
 #include "locks.h"
 #include "pad.h"
 
-#include <string>
-
 class Core;
 class Scheduler;
 class AggregateStat;
@@ -186,7 +184,7 @@ struct GlobSimInfo {
     TraceDriver* traceDriver;
 
 		// JIN
-//		std::string llcName;
+		const char* llcName;
 
 };
 

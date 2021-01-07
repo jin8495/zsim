@@ -471,7 +471,7 @@ static void InitSystem(Config& config) {
     string llc = parentlessCacheGroups[0];
 
 		// JIN
-//		zinfo->llcName = llc.c_str();
+		zinfo->llcName = gm_strdup(llc.c_str());
 
     auto isTerminal = [&](string group) -> bool {
         return childMap[group].size() == 0;

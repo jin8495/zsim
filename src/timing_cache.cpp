@@ -112,6 +112,19 @@ void TimingCache::initStats(AggregateStat* parentStat) {
 
 // TODO(dsm): This is copied verbatim from Cache. We should split Cache into different methods, then call those.
 uint64_t TimingCache::access(MemReq& req) {
+//		// JIN
+//		if(req.type == GETS || req.type == GETX)
+//		{
+//		printf("LOG, %s, %s, ", name.c_str(), AccessTypeName(req.type));
+//		DataLine data = gm_calloc<uint8_t>(zinfo->lineSize);
+//		Address reqAddress = req.lineAddr << lineBits;
+//		PIN_SafeCopy(data, (void*)reqAddress, zinfo->lineSize);
+//		for(unsigned i = 0; i < zinfo->lineSize / sizeof(int32_t); i++)
+//			printf("%d,", ((int32_t*)data)[i]);
+//		printf("\n");
+//		}
+//		//////////////////////
+
     EventRecorder* evRec = zinfo->eventRecorders[req.srcId];
     assert_msg(evRec, "TimingCache is not connected to TimingCore");
 

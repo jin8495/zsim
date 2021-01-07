@@ -126,12 +126,35 @@ uint64_t Cache::access(MemReq& req) {
 }
 
 // JIN
+static bool findSubstring(const char* string, const char* substring)
+{
+	unsigned i = 0;
+	unsigned j = 0;
+	while(string[i] != '\0')
+	{
+		if(string[i] == substring[j])
+		{
+			j++;
+			if(substring[j] == '\0')
+				return true;
+		}
+		else
+		{
+			j = 0;
+		}
+
+		i++;
+	}
+	return false;
+}
+
+// JIN
 // Assume that DRAM is inclusive of the LLC.
 // Because non-inclusive LLC is not implemented in the ZSim as far as I know.
 void Cache::PrintData(MemReq& req, bool isMiss)
 {
-//	if(zinfo->llcName != name.c_str())
-//		return;
+	if(!findSubstring(name.c_str(), zinfo->llcName))
+		return;
 
 	DataLine data = gm_calloc<uint8_t>(zinfo->lineSize);
 	Address reqAddress = req.lineAddr << lineBits;
@@ -142,7 +165,7 @@ void Cache::PrintData(MemReq& req, bool isMiss)
 	{
 		if(isMiss)
 		{
-			printf("DRAM_R, %lu, %s, 0x%016lx, ", req.cycle, AccessTypeName(req.type), reqAddress);
+			printf("DRAM_R, %s, %lu, %s, 0x%016lx, ", name.c_str(), req.cycle, AccessTypeName(req.type), reqAddress);
 	
 			for(unsigned i = 0; i < zinfo->lineSize; i++)
 				printf("%02x,", ((uint8_t*)data)[i]);
@@ -150,8 +173,9 @@ void Cache::PrintData(MemReq& req, bool isMiss)
 		}
 	}
 	// Write-through (Non-inclusive)
+	else
 	{
-		printf("DRAM_W, %lu, %s, 0x%016lx, ", req.cycle, AccessTypeName(req.type), reqAddress);
+		printf("DRAM_W, %s, %lu, %s, 0x%016lx, ", name.c_str(), req.cycle, AccessTypeName(req.type), reqAddress);
 
 		for(unsigned i = 0; i < zinfo->lineSize; i++)
 			printf("%02x,", ((uint8_t*)data)[i]);

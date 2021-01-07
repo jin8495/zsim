@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define N 1024
+#define N 4096
 
 int main()
 {
@@ -9,14 +9,14 @@ int main()
 
 	for(i = 0; i < N; i++)
 	{
-		a[i] = i;
-		b[i] = 2*i+i;
+		a[i] = 8008;
+		b[i] = 110;
 	}
 
 	for(i = 0; i < N; i++)
 		c[i] = a[i] + b[i];
-	for(i = 0; i < N; i++)
-		printf("%d, %d + %d = %d\n", i, a[i], b[i], c[i]);
+//	for(i = 0; i < N; i++)
+//		printf("%d, %d + %d = %d\n", i, a[i], b[i], c[i]);
 
 	return 0;
 }
