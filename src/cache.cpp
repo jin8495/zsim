@@ -149,10 +149,26 @@ static bool findSubstring(const char* string, const char* substring)
 }
 
 // JIN
+static uint8_t enumAccessType(AccessType t)
+{
+	if(t == GETS)				return 0;
+	else if(t == GETX)	return 1;
+	else if(t == PUTS)	return 2;
+	else if(t == PUTX)	return 3;
+	else {
+		printf("enum error!\n");
+		exit(1);
+	}
+}
+
+// JIN
 // Assume that DRAM is inclusive of the LLC.
 // Because non-inclusive LLC is not implemented in the ZSim as far as I know.
 void Cache::PrintData(MemReq& req, bool isMiss)
 {
+	if(zinfo->data_trace_output_FP != NULL)
+		return;
+
 	if(!findSubstring(name.c_str(), zinfo->llcName))
 		return;
 
@@ -180,6 +196,64 @@ void Cache::PrintData(MemReq& req, bool isMiss)
 		for(unsigned i = 0; i < zinfo->lineSize; i++)
 			printf("%02x,", ((uint8_t*)data)[i]);
 		printf("\n");
+	}
+}
+
+// JIN
+void Cache::WriteData(MemReq& req, bool isMiss)
+{
+	if(zinfo->data_trace_output_FP == NULL)
+		return;
+
+	if(!findSubstring(name.c_str(), zinfo->llcName))
+		return;
+
+	DataLine data = gm_calloc<uint8_t>(zinfo->lineSize);
+	Address reqAddress = req.lineAddr << lineBits;
+	PIN_SafeCopy(data, (void*)reqAddress, zinfo->lineSize);
+
+	// Read
+	if(req.type == GETS || req.type == GETX)
+	{
+		if(isMiss)
+		{
+			char rw = 'r';
+			fwrite(&rw, sizeof(char), 1, zinfo->data_trace_output_FP);
+
+			const char* o_name = name.c_str();
+			fwrite(o_name, sizeof(char), 10, zinfo->data_trace_output_FP);
+
+			uint64_t cycle = req.cycle;
+			fwrite(&cycle, sizeof(uint64_t), 1, zinfo->data_trace_output_FP);
+
+			uint8_t type = enumAccessType(req.type);
+			fwrite(&type, sizeof(uint8_t), 1, zinfo->data_trace_output_FP);
+
+			uint64_t addr = reqAddress;
+			fwrite(&addr, sizeof(uint64_t), 1, zinfo->data_trace_output_FP);
+
+			fwrite(data, sizeof(uint8_t), zinfo->lineSize, zinfo->data_trace_output_FP);
+		}
+	}
+	// Write-through (Non-inclusive)
+	else
+	{
+			char rw = 'w';
+			fwrite(&rw, sizeof(char), 1, zinfo->data_trace_output_FP);
+
+			const char* o_name = name.c_str();
+			fwrite(o_name, sizeof(char), 10, zinfo->data_trace_output_FP);
+
+			uint64_t cycle = req.cycle;
+			fwrite(&cycle, sizeof(uint64_t), 1, zinfo->data_trace_output_FP);
+
+			uint8_t type = enumAccessType(req.type);
+			fwrite(&type, sizeof(uint8_t), 1, zinfo->data_trace_output_FP);
+
+			uint64_t addr = reqAddress;
+			fwrite(&addr, sizeof(uint64_t), 1, zinfo->data_trace_output_FP);
+
+			fwrite(data, sizeof(uint8_t), zinfo->lineSize, zinfo->data_trace_output_FP);
 	}
 }
 

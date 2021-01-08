@@ -186,6 +186,10 @@ struct GlobSimInfo {
 		// JIN
 		const char* llcName;
 
+		// JIN
+		const char* logDir;
+		FILE* data_trace_output_FP = NULL;
+
 };
 
 

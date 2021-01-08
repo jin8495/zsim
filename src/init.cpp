@@ -861,6 +861,54 @@ static void InitGlobalStats() {
 }
 
 
+void key_header_write()
+{
+	if(zinfo->logDir == NULL)
+		return;
+	
+	FILE* fp = fopen(zinfo->logDir, "wb");
+	if(fp == NULL)
+	{
+		printf("File is not open\n");
+		exit(1);
+	}
+
+	const char num_of_keys = 6;
+	fwrite(&num_of_keys, sizeof(char), 1, fp);
+
+	const char rw[] = "@   rw";
+	const char rw_size = sizeof(char);
+	fwrite(rw, sizeof(char), 6, fp);
+	fwrite(&rw_size, sizeof(char), 1, fp);
+
+	const char name[] = "@ name";
+	const char name_size = sizeof(char) * 10;
+	fwrite(name, sizeof(char), 6, fp);
+	fwrite(&name_size, sizeof(char), 1, fp);
+
+	const char cycle[] = " cycle";
+	const char cycle_size = sizeof(long long);
+	fwrite(cycle, sizeof(char), 6, fp);
+	fwrite(&cycle_size, sizeof(char), 1, fp);
+
+	const char req_type[] = "  type";
+	const char req_type_size = sizeof(char);
+	fwrite(req_type, sizeof(char), 6, fp);
+	fwrite(&req_type_size, sizeof(char), 1, fp);
+
+	const char addr[] = "  addr";
+	const char addr_size = sizeof(long long);
+	fwrite(addr, sizeof(char), 6, fp);
+	fwrite(&addr_size, sizeof(char), 1, fp);
+
+	const char data[] = "  data";
+	const char data_size = zinfo->lineSize;
+	fwrite(data, sizeof(char), 6, fp);
+	fwrite(&data_size, sizeof(char), 1, fp);
+
+	zinfo->data_trace_output_FP = fp;
+}
+
 void SimInit(const char* configFile, const char* outputDir, uint32_t shmid) {
     zinfo = gm_calloc<GlobSimInfo>();
     zinfo->outputDir = gm_strdup(outputDir);
@@ -978,6 +1026,10 @@ void SimInit(const char* configFile, const char* outputDir, uint32_t shmid) {
     zinfo->procArray[0]->notifyStart(); //called here so that we can detect end-before-start races
 
     zinfo->pinCmd = new PinCmd(&config, nullptr /*don't pass config file to children --- can go either way, it's optional*/, outputDir, shmid);
+
+		// JIN
+		zinfo->logDir = config.get<const char*>("sim.logDir", nullptr);
+		key_header_write();
 
     //Caches, cores, memory controllers
     InitSystem(config);

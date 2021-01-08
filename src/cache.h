@@ -76,6 +76,7 @@ class Cache : public BaseCache {
 				// JIN
 				// Print dataline between LLC and DRAM
 				virtual void PrintData(MemReq& req, bool isMiss);
+				virtual void WriteData(MemReq& req, bool isMiss);
 
     protected:
         void initCacheStats(AggregateStat* cacheStat);

@@ -167,6 +167,7 @@ uint64_t TimingCache::access(MemReq& req) {
 
         if (getDoneCycle - req.cycle == accLat) {
 						this->PrintData(req, false);	// JIN
+						this->WriteData(req, false);	// JIN
 
             // Hit
             assert(!writebackRecord.isValid());
@@ -177,6 +178,7 @@ uint64_t TimingCache::access(MemReq& req) {
             tr.startEvent = tr.endEvent = ev;
         } else {
 						this->PrintData(req, true);	// JIN
+						this->WriteData(req, true);	// JIN
 
             assert_msg(getDoneCycle == respCycle, "gdc %ld rc %ld", getDoneCycle, respCycle);
 
