@@ -197,6 +197,8 @@ void Cache::PrintData(MemReq& req, bool isMiss)
 			printf("%02x,", ((uint8_t*)data)[i]);
 		printf("\n");
 	}
+
+	gm_free(data);
 }
 
 // JIN
@@ -255,6 +257,8 @@ void Cache::WriteData(MemReq& req, bool isMiss)
 
 			fwrite(data, sizeof(uint8_t), zinfo->lineSize, zinfo->data_trace_output_FP);
 	}
+
+	gm_free(data);
 }
 
 void Cache::startInvalidate() {
