@@ -187,6 +187,7 @@ struct GlobSimInfo {
 		const char* llcName;
 
 		// JIN
+		lock_t printLock;
 		const char* logDir;
 		FILE* data_trace_output_FP = NULL;
 

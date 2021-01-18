@@ -176,6 +176,7 @@ void Cache::PrintData(MemReq& req, bool isMiss)
 	Address reqAddress = req.lineAddr << lineBits;
 	PIN_SafeCopy(data, (void*)reqAddress, zinfo->lineSize);
 
+	futex_lock(&zinfo->printLock);
 	// Read
 	if(req.type == GETS || req.type == GETX)
 	{
@@ -197,6 +198,7 @@ void Cache::PrintData(MemReq& req, bool isMiss)
 			printf("%02x,", ((uint8_t*)data)[i]);
 		printf("\n");
 	}
+	futex_unlock(&zinfo->printLock);
 
 	gm_free(data);
 }
@@ -214,6 +216,7 @@ void Cache::WriteData(MemReq& req, bool isMiss)
 	Address reqAddress = req.lineAddr << lineBits;
 	PIN_SafeCopy(data, (void*)reqAddress, zinfo->lineSize);
 
+	futex_lock(&zinfo->printLock);
 	// Read
 	if(req.type == GETS || req.type == GETX)
 	{
@@ -257,6 +260,7 @@ void Cache::WriteData(MemReq& req, bool isMiss)
 
 			fwrite(data, sizeof(uint8_t), zinfo->lineSize, zinfo->data_trace_output_FP);
 	}
+	futex_unlock(&zinfo->printLock);
 
 	gm_free(data);
 }
